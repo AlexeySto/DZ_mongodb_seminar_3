@@ -1,0 +1,56 @@
+1.
+127.0.0.1:6379> set index "index precalculated content"
+OK
+127.0.0.1:6379> get index
+"index precalculated content"
+127.0.0.1:6379> ttl index
+(integer) -1
+127.0.0.1:6379> persist index
+(integer) 0
+
+2.
+127.0.0.1:6379> zadd ratings 10 mysql
+(integer) 1
+127.0.0.1:6379> zadd ratings 20 postgresql
+(integer) 1
+127.0.0.1:6379> zadd ratings 30 mongodb 
+(integer) 1
+127.0.0.1:6379> zadd ratings 40 redis 
+(integer) 1
+127.0.0.1:6379> zrange ratings 0 9
+1) "mysql"
+2) "postgresql"
+3) "mongodb"
+4) "redis"
+127.0.0.1:6379> zincrby ratings 15 mysql
+"25"
+127.0.0.1:6379> zrange ratings 0 9
+1) "postgresql"
+2) "mysql"
+3) "mongodb"
+4) "redis"
+127.0.0.1:6379> zpopmax ratings
+1) "redis"
+2) "40"
+127.0.0.1:6379> zrange ratings 0 9
+1) "postgresql"
+2) "mysql"
+3) "mongodb"
+
+3.
+127.0.0.1:6379> psubscribe events*
+Reading messages... (press Ctrl-C to quit)
+1) "psubscribe"
+2) "events*"
+3) (integer) 1
+127.0.0.1:6379> publish events101 "Hello there"
+(integer) 0
+
+4.
+127.0.0.1:6379> script load "redis.call('set', KEYS[1], KEYS[1]*KEYS[1])"
+"a72a433fd809cadf02522b73534fe7b44a34ed8a"
+127.0.0.1:6379> evalsha a72a433fd809cadf02522b73534fe7b44a34ed8a 1 2
+(nil)
+127.0.0.1:6379> get 2
+"4"
+
